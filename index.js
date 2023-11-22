@@ -61,7 +61,7 @@ const filePush = (file, compileResult, callback) => {
 
         return index === sourceFileIndex
           ? source
-          : path.join(sassFileSrcPath, source)
+          : path.join(sassFileSrcPath, source);
       });
     }
 
