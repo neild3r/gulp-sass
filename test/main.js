@@ -13,20 +13,14 @@ const tap = require('gulp-tap');
 const globule = require('globule');
 
 function getCompiler() {
-  if (process.argv.includes('--sass')) return 'sass';
   if (process.argv.includes('--embedded')) return 'sass-embedded';
-  return 'node-sass';
+  return 'sass';
 }
 
 const COMPILER = getCompiler();
-const LEGACY_API = COMPILER === 'node-sass' || process.argv.includes('--legacy');
 const MODERN_COMPILER = COMPILER === 'sass' || COMPILER === 'sass-embedded';
 
-/* eslint-disable import/no-dynamic-require */
-const sass = LEGACY_API
-  ? require('../legacy')(require(COMPILER))
-  : require('../index')(require(COMPILER));
-/* eslint-enable import/no-dynamic-require */
+const sass = require('../index')(require(COMPILER));
 
 const expectedTestsPath = MODERN_COMPILER ? 'expected-sass' : 'expected';
 
