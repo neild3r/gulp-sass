@@ -44,12 +44,18 @@ const filePush = (file, compileResult, callback) => {
 
     if (sassFileSrcPath) {
       const sourceFileIndex = sassMap.sources.indexOf(sassMapFile);
+      // console.log (sassMapFile);
       // Prepend the path to all files in the sources array except the file that's being worked on
-      sassMap.sources = sassMap.sources.map((source, index) => (
-        index === sourceFileIndex
-          ? source
-          : path.join(sassFileSrcPath, source)
-      ));
+      sassMap.sources = sassMap.sources.map((source, index) => {
+          // Make path relative
+          if (source.startsWith('file://')) {
+            let relative = path.relative(path.dirname(file.path), source.replace(/^file:/, ''));
+            return relative;
+          }
+          return index === sourceFileIndex
+            ? source
+            : path.join(sassFileSrcPath, source)
+      });
     }
 
     // Remove 'stdin' from souces and replace with filenames!
@@ -57,6 +63,7 @@ const filePush = (file, compileResult, callback) => {
 
     // Replace the map file with the original filename (but new extension)
     sassMap.file = replaceExtension(sassFileSrc, '.css');
+
     // Apply the map
     applySourceMap(file, sassMap);
   }
@@ -127,7 +134,6 @@ const gulpSass = (options, sync) => {
     } else {
       opts.loadPaths = [];
     }
-
     opts.loadPaths.unshift(path.dirname(file.path));
 
     // Generate Source Maps if the source-map plugin is present
