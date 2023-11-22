@@ -42,26 +42,26 @@ const filePush = (file, compileResult, callback) => {
     // Grab the path portion of the file that's being worked on
     const sassFileSrcPath = path.dirname(sassFileSrc);
 
-    let rxp = new RegExp(sassFileSrc + '$')
+    const rxp = new RegExp(`${sassFileSrc}\$`);
     const base = file.path.replace(rxp, '');
 
     if (sassFileSrcPath) {
-      var sourceFileIndex = sassMap.sources.indexOf(sassMapFile);
+      let sourceFileIndex = sassMap.sources.indexOf(sassMapFile);
       if (sourceFileIndex === -1) {
         sourceFileIndex = sassMap.sources.indexOf('file://' + sassMapFile);
       }
 
       // Prepend the path to all files in the sources array except the file that's being worked on
       sassMap.sources = sassMap.sources.map((source, index) => {
-          // Make path relative
-          if (source.startsWith('file://')) {
-            let relative = path.relative(base, source.replace(/^file:/, ''));
-            return relative;
-          }
+        // Make path relative
+        if (source.startsWith('file://')) {
+          let relative = path.relative(base, source.replace(/^file:/, ''));
+          return relative;
+        }
 
-          return index === sourceFileIndex
-            ? source
-            : path.join(sassFileSrcPath, source)
+        return index === sourceFileIndex
+          ? source
+          : path.join(sassFileSrcPath, source)
       });
     }
 
