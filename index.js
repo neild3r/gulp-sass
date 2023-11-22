@@ -44,7 +44,6 @@ const filePush = (file, compileResult, callback) => {
 
     if (sassFileSrcPath) {
       const sourceFileIndex = sassMap.sources.indexOf(sassMapFile);
-      // console.log (sassMapFile);
       // Prepend the path to all files in the sources array except the file that's being worked on
       sassMap.sources = sassMap.sources.map((source, index) => {
           // Make path relative
