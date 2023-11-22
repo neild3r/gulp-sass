@@ -20,6 +20,7 @@ function getCompiler() {
 const COMPILER = getCompiler();
 const MODERN_COMPILER = COMPILER === 'sass' || COMPILER === 'sass-embedded';
 
+// eslint-disable-next-line import/no-dynamic-require
 const sass = require('../index')(require(COMPILER));
 
 const expectedTestsPath = MODERN_COMPILER ? 'expected-sass' : 'expected';
@@ -556,7 +557,7 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sourcemaps.init())
       .pipe(sass.sync())
       .pipe(tap((file) => {
-        assert.ok(file.sourceMap);        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap); // look for partial matches since each test runner can have a different absolute path
         assert.ok(file.sourceMap.sources.every(
           (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
         ));
