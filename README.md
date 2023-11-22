@@ -1,8 +1,6 @@
-# gulp-sass ![npm package version](https://img.shields.io/npm/v/gulp-sass?label=npm%20version) [![Build Status](https://img.shields.io/github/workflow/status/dlmanning/gulp-sass/CI/master)](https://github.com/dlmanning/gulp-sass/actions?query=workflow%3ACI+branch%3Amaster) [![Join the chat at https://gitter.im/dlmanning/gulp-sass](https://img.shields.io/gitter/room/dlmanning/gulp-sass?color=%2346b091&label=chat&logo=gitter)](https://gitter.im/dlmanning/gulp-sass) ![Node.js support](https://img.shields.io/node/v/gulp-sass)
+# gulp-sass ![npm package version](https://img.shields.io/npm/v/@d3r/gulp-sass?label=npm%20version) [![Build Status](https://img.shields.io/github/actions/workflow/status/d3r/gulp-sass/ci.yml?branch=master)](https://github.com/d3r/gulp-sass/actions?query=workflow%3ACI+branch%3Amaster) ![Node.js support](https://img.shields.io/node/v/@d3r/gulp-sass)
 
 Sass plugin for [Gulp](https://github.com/gulpjs/gulp).
-
-**_Before filing an issue, please make sure you have [updated to the latest version of `gulp-sass`](https://github.com/dlmanning/gulp-sass/wiki/Update-to-the-latest-Gulp-Sass) and have gone through our [Common Issues and Their Fixes](https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes) section._**
 
 **Migrating your existing project to version 5 or 6? Please read our (short!) [migration guides](#migrating-to-version-6).**
 
@@ -12,7 +10,7 @@ Only [Active LTS and Current releases](https://github.com/nodejs/Release#release
 
 ## Installation
 
-To use `gulp-sass`, you must install both `gulp-sass` itself *and* a Sass compiler. `gulp-sass` supports both [Embedded Sass][], [Dart Sass][] and [Node Sass][], although Node Sass is [deprecated](https://sass-lang.com/blog/libsass-is-deprecated). We recommend that you use Dart Sass for new projects, and migrate Node Sass projects to Dart Sass or Embedded Sass when possible.
+To use `gulp-sass`, you must install both `gulp-sass` itself *and* a Sass compiler. `gulp-sass` supports both [Embedded Sass][] and [Dart Sass][].
 
 Whichever compiler you choose, it's best to install these as dev dependencies:
 
@@ -154,18 +152,6 @@ exports.buildStyles = buildStyles;
   };
 ```
 
-If you want to keep using the legacy API while it's available, you can.
-
-```js
-const sass = require('gulp-sass/legacy')(require('sass'));
-```
-
-If you use source maps, you may see the result change somewhat. The result will typically be absolute `file:` URLs, rather than relative ones. The result may also be the source itself, URL encoded. You can [optionally add custom importers](https://sass-lang.com/documentation/js-api/interfaces/CompileResult#sourceMap) to adjust the source maps according to your own needs.
-
-<h2 id="migrating-to-version-5">Migrating to version 5</h2>
-
-`gulp-sass` version 5 requires Node.js 12 or later, and introduces some breaking changes. Additionally, changes in Node.js itself mean that Node fibers can no longer be used to speed up Dart Sass in Node.js 16.
-
 ### Setting a Sass compiler
 
 As of version 5, `gulp-sass` _does not include a default Sass compiler_, so you must install one (either `sass`, `sass-embedded`, or `node-sass`) along with `gulp-sass`.
@@ -174,7 +160,7 @@ As of version 5, `gulp-sass` _does not include a default Sass compiler_, so you 
 npm install sass gulp-sass --save-dev
 ```
 
-Then, you must explicitly set that compiler in your gulpfille. Instead of setting a `compiler` prop on the `gulp-sass` instance, you pass the compiler into a function call when instantiating `gulp-sass`.
+Then, you must explicitly set that compiler in your gulpfile. Instead of setting a `compiler` prop on the `gulp-sass` instance, you pass the compiler into a function call when instantiating `gulp-sass`.
 
 These changes look something like this:
 
@@ -197,35 +183,10 @@ import dartSass from 'sass';
 + const sass = gulpSass(dartSass);
 ```
 
-### Using the legacy Sass API
-
-If you need to use the deprecated `render` Sass API, `gulp-sass` still includes legacy support.
-
-```js
-'use strict';
-
-const gulp = require('gulp');
-const sass = require('gulp-sass/legacy')(require('sass'));
-
-function buildStyles() {
-  return gulp.src('./sass/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./css'));
-};
-
-exports.buildStyles = buildStyles;
-exports.watch = function () {
-  gulp.watch('./sass/**/*.scss', ['sass']);
-};
-````
-
-### What about fibers?
-
-We used to recommend Node fibers as a way to speed up asynchronous rendering with Dart Sass. Unfortunately, [Node fibers are discontinued](https://sass-lang.com/blog/node-fibers-discontinued) and will not work in Node.js 16. The Sass team is exploring its options for future performance improvements, but for now, you will get the best performance from `sass.sync()`.
 
 ## Issues
 
-`gulp-sass` is a light-weight wrapper around either [Dart Sass][] or [Node Sass][] (which in turn is a Node.js binding for [LibSass][]. Because of this, the issue you're having likely isn't a `gulp-sass` issue, but an issue with one those projects or with [Sass][] as a whole.
+`gulp-sass` is a light-weight wrapper around [Dart Sass][] (which in turn is a Node.js binding for [LibSass][]. Because of this, the issue you're having likely isn't a `gulp-sass` issue, but an issue with one those projects or with [Sass][] as a whole.
 
 If you have a feature request/question about how Sass works/concerns on how your Sass gets compiled/errors in your compiling, it's likely a Dart Sass or LibSass issue and you should file your issue with one of those projects.
 

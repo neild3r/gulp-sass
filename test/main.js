@@ -13,20 +13,15 @@ const tap = require('gulp-tap');
 const globule = require('globule');
 
 function getCompiler() {
-  if (process.argv.includes('--sass')) return 'sass';
   if (process.argv.includes('--embedded')) return 'sass-embedded';
-  return 'node-sass';
+  return 'sass';
 }
 
 const COMPILER = getCompiler();
-const LEGACY_API = COMPILER === 'node-sass' || process.argv.includes('--legacy');
 const MODERN_COMPILER = COMPILER === 'sass' || COMPILER === 'sass-embedded';
 
-/* eslint-disable import/no-dynamic-require */
-const sass = LEGACY_API
-  ? require('../legacy')(require(COMPILER))
-  : require('../index')(require(COMPILER));
-/* eslint-enable import/no-dynamic-require */
+// eslint-disable-next-line import/no-dynamic-require
+const sass = require('../index')(require(COMPILER));
 
 const expectedTestsPath = MODERN_COMPILER ? 'expected-sass' : 'expected';
 
@@ -255,13 +250,6 @@ describe('gulp-sass -- async compile', () => {
       + '"sourcesContent": [ "@import ../inheritance;" ]'
     + '}';
 
-    // Expected sources are relative to file.base
-    const legacyExpectedSources = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
     // Going forward the source map typically uses absolute file: URLs,
     // although this can be controlled by custom importers
     const expectedSources = [
@@ -273,14 +261,10 @@ describe('gulp-sass -- async compile', () => {
     const stream = sass();
     stream.on('data', (cssFile) => {
       assert.ok(cssFile.sourceMap);
-      if (LEGACY_API) {
-        assert.deepEqual(cssFile.sourceMap.sources.sort(), legacyExpectedSources.sort());
-      } else {
-        // look for partial matches since each test runner can have a different absolute path
-        assert.ok(cssFile.sourceMap.sources.every(
-          (source) => expectedSources.find((partial) => source.includes(partial)),
-        ));
-      }
+      // look for partial matches since each test runner can have a different absolute path
+      assert.ok(cssFile.sourceMap.sources.every(
+        (source) => expectedSources.find((partial) => source.includes(partial)),
+      ));
       done();
     });
     stream.write(sassFile);
@@ -459,13 +443,6 @@ describe('gulp-sass -- sync compile', () => {
   it('should work with gulp-sourcemaps', (done) => {
     const sassFile = createVinyl('inheritance.scss');
 
-    // Expected sources are relative to file.base
-    const legacyExpectedSources = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
     // Going forward the source map typically uses absolute file: URLs,
     // although this can be controlled by custom importers
     const expectedSources = [
@@ -486,32 +463,16 @@ describe('gulp-sass -- sync compile', () => {
     const stream = sass.sync();
     stream.on('data', (cssFile) => {
       assert.ok(cssFile.sourceMap);
-      if (LEGACY_API) {
-        assert.deepEqual(cssFile.sourceMap.sources.sort(), legacyExpectedSources.sort());
-      } else {
-        // look for partial matches since each test runner can have a different absolute path
-        assert.ok(cssFile.sourceMap.sources.every(
-          (source) => expectedSources.find((partial) => source.includes(partial)),
-        ));
-      }
+      // look for partial matches since each test runner can have a different absolute path
+      assert.ok(cssFile.sourceMap.sources.every(
+        (source) => expectedSources.find((partial) => source.includes(partial)),
+      ));
       done();
     });
     stream.write(sassFile);
   });
 
   it('should work with gulp-sourcemaps and autoprefixer', (done) => {
-    const legacyExpectedSourcesBefore = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
-    const legacyExpectedSourcesAfter = [
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-      'inheritance.scss',
-    ];
-
     const expectedSourcesBefore = [
       'data:',
       'includes/_cats.scss',
@@ -524,39 +485,28 @@ describe('gulp-sass -- sync compile', () => {
       'data:',
     ];
 
-    if (MODERN_COMPILER) {
-      const result = 'inheritance.css';
-      legacyExpectedSourcesAfter.push(result);
-      expectedSourcesAfter.push(result);
-    }
+    const result = 'inheritance.css';
+    expectedSourcesAfter.push(result);
 
     gulp.src(path.join(__dirname, 'scss', 'inheritance.scss'))
       .pipe(sourcemaps.init())
       .pipe(sass.sync())
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesBefore.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
+        ));
       }))
       .pipe(postcss([autoprefixer()]))
       .pipe(sourcemaps.write())
       .pipe(gulp.dest(path.join(__dirname, 'results')))
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesAfter.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
+        ));
       }));
     done();
   });
@@ -576,34 +526,16 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sass.sync())
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          const actual = normaliseEOL(file.sourceMap.sourcesContent[0]);
-          const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.sources[0])]);
-          assert.deepEqual(actual, expected);
-        } else {
-          const sourceMap = file.sourceMap.sources[0];
-          const source = decodeURI(sourceMap.split('data:;charset=utf-8,')[1]);
-          const actual = normaliseEOL(source);
-          const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.file.replace('.css', '.scss'))]);
-          assert.deepEqual(actual, expected);
-        }
+        const sourceMap = file.sourceMap.sources[0];
+        const source = decodeURI(sourceMap.split('data:;charset=utf-8,')[1]);
+        const actual = normaliseEOL(source);
+        const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.file.replace('.css', '.scss'))]);
+        assert.deepEqual(actual, expected);
       }));
     done();
   });
 
   it('should work with gulp-sourcemaps and autoprefixer with different file.base', (done) => {
-    const legacyExpectedSourcesBefore = [
-      'scss/inheritance.scss',
-      'scss/includes/_cats.scss',
-      'scss/includes/_dogs.sass',
-    ];
-
-    const legacyExpectedSourcesAfter = [
-      'scss/includes/_cats.scss',
-      'scss/includes/_dogs.sass',
-      'scss/inheritance.scss',
-    ];
-
     const expectedSourcesBefore = [
       'scss/data:',
       'scss/includes/_cats.scss',
@@ -618,7 +550,6 @@ describe('gulp-sass -- sync compile', () => {
 
     if (MODERN_COMPILER) {
       const result = 'scss/inheritance.css';
-      legacyExpectedSourcesAfter.push(result);
       expectedSourcesAfter.push(result);
     }
 
@@ -626,27 +557,18 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sourcemaps.init())
       .pipe(sass.sync())
       .pipe(tap((file) => {
-        assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesBefore.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
-          ));
-        }
+        assert.ok(file.sourceMap); // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
+        ));
       }))
       .pipe(postcss([autoprefixer()]))
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesAfter.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
+        ));
       }));
     done();
   });
