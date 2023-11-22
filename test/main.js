@@ -249,13 +249,6 @@ describe('gulp-sass -- async compile', () => {
       + '"sourcesContent": [ "@import ../inheritance;" ]'
     + '}';
 
-    // Expected sources are relative to file.base
-    const legacyExpectedSources = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
     // Going forward the source map typically uses absolute file: URLs,
     // although this can be controlled by custom importers
     const expectedSources = [
@@ -449,13 +442,6 @@ describe('gulp-sass -- sync compile', () => {
   it('should work with gulp-sourcemaps', (done) => {
     const sassFile = createVinyl('inheritance.scss');
 
-    // Expected sources are relative to file.base
-    const legacyExpectedSources = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
     // Going forward the source map typically uses absolute file: URLs,
     // although this can be controlled by custom importers
     const expectedSources = [
@@ -486,18 +472,6 @@ describe('gulp-sass -- sync compile', () => {
   });
 
   it('should work with gulp-sourcemaps and autoprefixer', (done) => {
-    const legacyExpectedSourcesBefore = [
-      'inheritance.scss',
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-    ];
-
-    const legacyExpectedSourcesAfter = [
-      'includes/_cats.scss',
-      'includes/_dogs.sass',
-      'inheritance.scss',
-    ];
-
     const expectedSourcesBefore = [
       'data:',
       'includes/_cats.scss',
@@ -510,11 +484,8 @@ describe('gulp-sass -- sync compile', () => {
       'data:',
     ];
 
-    if (MODERN_COMPILER) {
-      const result = 'inheritance.css';
-      legacyExpectedSourcesAfter.push(result);
-      expectedSourcesAfter.push(result);
-    }
+    const result = 'inheritance.css';
+    expectedSourcesAfter.push(result);
 
     gulp.src(path.join(__dirname, 'scss', 'inheritance.scss'))
       .pipe(sourcemaps.init())
@@ -564,18 +535,6 @@ describe('gulp-sass -- sync compile', () => {
   });
 
   it('should work with gulp-sourcemaps and autoprefixer with different file.base', (done) => {
-    const legacyExpectedSourcesBefore = [
-      'scss/inheritance.scss',
-      'scss/includes/_cats.scss',
-      'scss/includes/_dogs.sass',
-    ];
-
-    const legacyExpectedSourcesAfter = [
-      'scss/includes/_cats.scss',
-      'scss/includes/_dogs.sass',
-      'scss/inheritance.scss',
-    ];
-
     const expectedSourcesBefore = [
       'scss/data:',
       'scss/includes/_cats.scss',
@@ -590,7 +549,6 @@ describe('gulp-sass -- sync compile', () => {
 
     if (MODERN_COMPILER) {
       const result = 'scss/inheritance.css';
-      legacyExpectedSourcesAfter.push(result);
       expectedSourcesAfter.push(result);
     }
 
