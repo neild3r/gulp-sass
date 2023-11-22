@@ -267,14 +267,10 @@ describe('gulp-sass -- async compile', () => {
     const stream = sass();
     stream.on('data', (cssFile) => {
       assert.ok(cssFile.sourceMap);
-      if (LEGACY_API) {
-        assert.deepEqual(cssFile.sourceMap.sources.sort(), legacyExpectedSources.sort());
-      } else {
-        // look for partial matches since each test runner can have a different absolute path
-        assert.ok(cssFile.sourceMap.sources.every(
-          (source) => expectedSources.find((partial) => source.includes(partial)),
-        ));
-      }
+      // look for partial matches since each test runner can have a different absolute path
+      assert.ok(cssFile.sourceMap.sources.every(
+        (source) => expectedSources.find((partial) => source.includes(partial)),
+      ));
       done();
     });
     stream.write(sassFile);
@@ -480,14 +476,10 @@ describe('gulp-sass -- sync compile', () => {
     const stream = sass.sync();
     stream.on('data', (cssFile) => {
       assert.ok(cssFile.sourceMap);
-      if (LEGACY_API) {
-        assert.deepEqual(cssFile.sourceMap.sources.sort(), legacyExpectedSources.sort());
-      } else {
-        // look for partial matches since each test runner can have a different absolute path
-        assert.ok(cssFile.sourceMap.sources.every(
-          (source) => expectedSources.find((partial) => source.includes(partial)),
-        ));
-      }
+      // look for partial matches since each test runner can have a different absolute path
+      assert.ok(cssFile.sourceMap.sources.every(
+        (source) => expectedSources.find((partial) => source.includes(partial)),
+      ));
       done();
     });
     stream.write(sassFile);
@@ -529,28 +521,20 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sass.sync())
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesBefore.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
+        ));
       }))
       .pipe(postcss([autoprefixer()]))
       .pipe(sourcemaps.write())
       .pipe(gulp.dest(path.join(__dirname, 'results')))
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesAfter.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
+        ));
       }));
     done();
   });
@@ -570,17 +554,11 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sass.sync())
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          const actual = normaliseEOL(file.sourceMap.sourcesContent[0]);
-          const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.sources[0])]);
-          assert.deepEqual(actual, expected);
-        } else {
-          const sourceMap = file.sourceMap.sources[0];
-          const source = decodeURI(sourceMap.split('data:;charset=utf-8,')[1]);
-          const actual = normaliseEOL(source);
-          const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.file.replace('.css', '.scss'))]);
-          assert.deepEqual(actual, expected);
-        }
+        const sourceMap = file.sourceMap.sources[0];
+        const source = decodeURI(sourceMap.split('data:;charset=utf-8,')[1]);
+        const actual = normaliseEOL(source);
+        const expected = normaliseEOL(filesContent[path.normalize(file.sourceMap.file.replace('.css', '.scss'))]);
+        assert.deepEqual(actual, expected);
       }));
     done();
   });
@@ -620,27 +598,18 @@ describe('gulp-sass -- sync compile', () => {
       .pipe(sourcemaps.init())
       .pipe(sass.sync())
       .pipe(tap((file) => {
-        assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesBefore.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
-          ));
-        }
+        assert.ok(file.sourceMap);        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesBefore.find((partial) => source.includes(partial)),
+        ));
       }))
       .pipe(postcss([autoprefixer()]))
       .pipe(tap((file) => {
         assert.ok(file.sourceMap);
-        if (LEGACY_API) {
-          assert.deepEqual(file.sourceMap.sources.sort(), legacyExpectedSourcesAfter.sort());
-        } else {
-          // look for partial matches since each test runner can have a different absolute path
-          assert.ok(file.sourceMap.sources.every(
-            (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
-          ));
-        }
+        // look for partial matches since each test runner can have a different absolute path
+        assert.ok(file.sourceMap.sources.every(
+          (source) => expectedSourcesAfter.find((partial) => source.includes(partial)),
+        ));
       }));
     done();
   });
