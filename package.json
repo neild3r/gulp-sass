@@ -1,24 +1,22 @@
 {
   "name": "@d3r/gulp-sass",
-  "version": "5.2.0",
-  "description": "Gulp plugin for sass",
+  "version": "6.0.0",
+  "description": "Gulp plugin for sass using sass API v2",
   "main": "index.js",
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "scripts": {
     "lint": "eslint --report-unused-disable-directives --ignore-path .gitignore .",
     "fix": "npm run lint -- --fix",
     "mocha": "mocha",
-    "test": "npm run test:node-sass && npm run test:dart-sass && npm run test:legacy-dart-sass && npm run test:sass-embedded",
-    "test:node-sass": "mocha",
-    "test:dart-sass": "mocha -- --sass",
-    "test:legacy-dart-sass": "mocha -- --sass --legacy",
+    "test": "npm run test:dart-sass && npm run test:sass-embedded",
+    "test:dart-sass": "mocha",
     "test:sass-embedded": "mocha -- --embedded"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dlmanning/gulp-sass.git"
+    "url": "git+https://github.com/d3r/gulp-sass.git"
   },
   "keywords": [
     "gulpplugin",
@@ -26,14 +24,17 @@
     "gulp"
   ],
   "author": "David Manning",
+  "contributors": [
+    "Neil Brayfield",
+    "William Killerud"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dlmanning/gulp-sass/issues"
+    "url": "https://github.com/d3r/gulp-sass/issues"
   },
-  "homepage": "https://github.com/dlmanning/gulp-sass#readme",
+  "homepage": "https://github.com/d3r/gulp-sass#readme",
   "files": [
-    "index.js",
-    "legacy.js"
+    "index.js"
   ],
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
@@ -54,7 +55,6 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-tap": "^2.0.0",
     "mocha": "^9.1.3",
-    "node-sass": "^7.0.1",
     "postcss": "^8.4.5",
     "rimraf": "^3.0.2",
     "sass": "^1.45.1",
