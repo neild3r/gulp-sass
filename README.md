@@ -1,4 +1,4 @@
-# gulp-sass ![npm package version](https://img.shields.io/npm/v/@d3r/gulp-sass?label=npm%20version) [![Build Status](https://img.shields.io/github/workflow/status/d3r/gulp-sass/ci?branch=master)](https://github.com/d3r/gulp-sass/actions?query=workflow%3ACI+branch%3Amaster) ![Node.js support](https://img.shields.io/node/v/@d3r/gulp-sass)
+# gulp-sass ![npm package version](https://img.shields.io/npm/v/@d3r/gulp-sass?label=npm%20version) [![Build Status](https://img.shields.io/github/actions/workflow/status/d3r/gulp-sass/ci.yml?branch=master)](https://github.com/d3r/gulp-sass/actions?query=workflow%3ACI+branch%3Amaster) ![Node.js support](https://img.shields.io/node/v/@d3r/gulp-sass)
 
 Sass plugin for [Gulp](https://github.com/gulpjs/gulp).
 
